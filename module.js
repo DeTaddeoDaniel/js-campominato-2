@@ -8,23 +8,23 @@ function getRndInteger(min, max) {
 }
 
 // ripetizioni eventuali numeri
-function checkRipetizioni(numero){
+// function checkRipetizioni(numero){
 
-    var ripetizione = false;
+//     var ripetizione = false;
 
-    for (let i = 0; i < arrayMine.length && !ripetizione; i++) {
+//     for (let i = 0; i < arrayMine.length && !ripetizione; i++) {
         
-        if(numero == arrayMine[i]){
-            ripetizione = true;
-        } else {
-            ripetizione = false;
-        }
+//         if(numero == arrayMine[i]){
+//             ripetizione = true;
+//         } else {
+//             ripetizione = false;
+//         }
         
-    }
+//     }
 
-    // console.log(" * Ripetizione numero " + numero + " : " + ripetizione);
-    return ripetizione;
-}
+//     // console.log(" * Ripetizione numero " + numero + " : " + ripetizione);
+//     return ripetizione;
+// }
 
 //  restituisce numero celle gioco
 function numberMax( difficolta){
@@ -50,7 +50,7 @@ function numberMax( difficolta){
 
 }
 
-// genera numeri in cui ci sono le mine
+// genera numeri in cui ci sono le mine *
 function getAddMine( livello){
 
     console.log(" scelta numero mine in base alla difficlta");
@@ -62,12 +62,12 @@ function getAddMine( livello){
     for (let i = 0; i < numeroMine; i++) {
         
         numeroEstratto = getRndInteger(numeroMin,numeroMax);
-        
-        if(checkRipetizioni(numeroEstratto)){
-            i--;
-        } else {    
+
+        if(!arrayMine.includes(numeroEstratto)){
             arrayMine.push(numeroEstratto);
             console.log( i + " - Numero casella mina: " + numeroEstratto);        
+        } else {
+            i--
         }
     }
 
@@ -80,7 +80,7 @@ function inputNumero(min, max){
     var checkInput = false;
     var numero = 0;
 
-    console.log("----------------------");
+    console.log(" ---- **** ----");
 
     do{
 
@@ -122,13 +122,14 @@ function inputNumero(min, max){
 // aggiungi numeri estratti
 function addNumber(numero){
 
-    if(!checkRipetizioni(numero)){
-
-        arrayNumeriEstratti.push(numero);
-        console.log("aggiunto numeri estratti: " + numero);
-        console.log("--------");
-
+    if(!arrayNumeriEstratti.includes(numero)){
+        arrayNumeriEstratti.push(numeroEstratto);
+        console.log("aggiunto numeri estratti: " + numero);  
+    } else {
+        console.log("Non aggiunto numeri estratti: " + numero);
     }
+
+      console.log("--------");     
     
 }
 
@@ -138,26 +139,12 @@ function isMina(numero){
     var isMina = false;
     var indice = 0;
 
-    do{
-
-        // Controlla se è una mina
-        if( numero == arrayMine[indice]){
-
-            console.log(numero + " è  una mina in posizione " + indice);
-            isMina = true;
-        
-        // non è una mina
-        } else {
-
-            console.log(numero + " non è  una mina in posizione " + indice);
-            isMina = false;
-            
-        } 
-
-        // controlla l'elemento successivo
-        indice++;
-
-    } while(!isMina && indice < arrayMine.length);
+    if(arrayMine.includes(numero)){
+        console.log(numero + " è  una mina in posizione " + indice);
+        isMina = true;
+    } else{
+        console.log(numero + " non è  una mina in posizione " + indice);
+    }
 
     console.log("------------");
 
@@ -172,14 +159,14 @@ function mossaDisponibile( numberMax){
     var mossaDisponibile = numberMax - arrayMine.length - arrayNumeriEstratti.length;
 
     if( mossaDisponibile == 0 ){
-        console.log("Mossa non disponibili");
+        // console.log("Mossa non disponibili");
         mossaDisponibile = false;
     } else {
-        console.log("Mosse disponibili: "+ mossaDisponibile);
+        // console.log("Mosse disponibili: "+ mossaDisponibile);
         mossaDisponibile = true;
     }
 
-    console.log("------------");
+    // console.log("------------");
     return mossaDisponibile;
 
 }
@@ -256,45 +243,45 @@ function sceltaDifficolta(){
 // programma
 function programma(){
 
-    var playGame = true;
+    // var playGame = true;
     
-    console.log("Scegli una difficolta");
-    var livello = sceltaDifficolta(0,3);
+    // console.log("Scegli una difficolta");
+    // var livello = sceltaDifficolta(0,3);
 
-    var numeroMax = numberMax(livello);
+    // var numeroMax = numberMax(livello);
 
-    console.log("Genera numeri mine");
-    getAddMine(livello);
+    // console.log("Genera numeri mine");
+    // getAddMine(livello);
 
-    do{
+    // do{
 
-        console.log("Richiesta numero utente");
-        var numero = inputNumero(1, numeroMax);
+        // console.log("Richiesta numero utente");
+        // var numero = inputNumero(1, numeroMax);
 
-        console.log("inserisci ai numeri estratti");
-        addNumber(numero);
+        // console.log("inserisci ai numeri estratti");
+        // addNumber(numero);
 
-        console.log("Controlla se finita partita");
-        var endGameVar = CheckEndGame(numero, numeroMax);
+        // console.log("Controlla se finita partita");
+        // var endGameVar = CheckEndGame(numero, numeroMax);
 
-        if(!endGameVar){
-            console.log("terminata la partita");
-            playGame = false;
-        } else {
-            console.log("continua la partita");
-            playGame = true;
-        }
+        // if(!endGameVar){
+        //     console.log("terminata la partita");
+        //     playGame = false;
+        // } else {
+        //     // console.log("continua la partita");
+        //     playGame = true;
+        // }
 
-    } while (playGame);
+    // } while (playGame);
 
     // punteggio finale
-    if(isMina(numero) && arrayNumeriEstratti-length == 0){
-        console.log("Il tuo punteggio finale: " + (arrayNumeriEstratti.length));
-    } else if(isMina(numero)){
-        console.log("Il tuo punteggio finale: " + arrayNumeriEstratti.length);
-    } else{
-         console.log("Punteggio senza ripetizioni numeri");
-    }
+    // if(isMina(numero) && arrayNumeriEstratti-length == 0){
+    //     console.log("Il tuo punteggio finale: " + (arrayNumeriEstratti.length));
+    // } else if(isMina(numero)){
+    //     console.log("Il tuo punteggio finale: " + arrayNumeriEstratti.length);
+    // } else{
+    //      console.log("Punteggio senza ripetizioni numeri");
+    // }
 
 }
 
