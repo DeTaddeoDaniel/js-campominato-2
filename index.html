@@ -9,32 +9,61 @@
 <body>
 
     <div class="container">
+        
+        <!-- title -->
         <div class="row">
             <div class="col-12">
                 
                 <!-- title -->
                 <div class="d-flex justify-content-center align-item-center">
+
                     <h1 class="text-center"> 
                         <i class="fas fa-gamepad font-size-25"></i>
                         Campo minato easy
                         <i class="fas fa-gamepad font-size-25"></i>
                     </h1>
+
                 </div>
 
             </div>
         </div>
         
+        <!-- input - button -->
         <div class="row">
             <div class="col-12">
                 
-                <!-- punteggio -->
+                <!-- barra pulsanti - input -->
                 <div class="d-flex justify-content-between align-item-center">
-                    <div class="left">left</div>
-                    <div class="right">right</div>
+                        
+                    <!-- pulsanti pagina -->
+                    <div class="left d-flex">
+                        <button class="btn btn-info newGame">Reflesh page</button>
+                        <input class='mx-1 livello' id="inputHTML" value=1 type="number" placeholder="level">
+                        <input class='mx-1 number' id="inputHTML"  type="number" placeholder="number">
+                    </div>
+                    
+                    <!-- punteggio utente -->
+                    <div class="right">
+                        <div class="punteggio">
+                            Punteggio: <span>2</span>
+                        </div>
+                    </div>
+
                 </div>
 
             </div>
         </div>
+        <!-- fine row -->
+
+        <div class="row">
+            <div class="col-12">
+                
+                <!-- mine (develoment only) -->
+                <div class="MostraMine">Mostra mine</div>
+
+            </div>
+        </div>
+        <!-- fine row -->
             
     </div>
 

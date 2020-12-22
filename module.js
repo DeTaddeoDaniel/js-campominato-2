@@ -1,32 +1,28 @@
-// array campo minato
 var arrayMine = [];
 var arrayNumeriEstratti = [];
+
+// click event
+$('.newGame').click(function (e) { 
+    console.log('reload page')
+    location.reload()    
+});
+
+$('.livello').keypress( function(e){
+    if(e.which == 13){
+        console.log('enter key press')
+        programma() 
+    }  
+});
+
+// elementi html variabili
+var HTMLnumero = document.getElementById('inputHTML')
 
 // genera numeri casuali con min e max complessi
 function getRndInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1) ) + min;
 }
 
-// ripetizioni eventuali numeri
-// function checkRipetizioni(numero){
-
-//     var ripetizione = false;
-
-//     for (let i = 0; i < arrayMine.length && !ripetizione; i++) {
-        
-//         if(numero == arrayMine[i]){
-//             ripetizione = true;
-//         } else {
-//             ripetizione = false;
-//         }
-        
-//     }
-
-//     // console.log(" * Ripetizione numero " + numero + " : " + ripetizione);
-//     return ripetizione;
-// }
-
-//  restituisce numero celle gioco
+//  restituisce numero celle gioco *
 function numberMax( difficolta){
 
     var numberMax = 0;
@@ -44,13 +40,13 @@ function numberMax( difficolta){
             break;
     }
 
-    console.log("Numero max :" + numeroMax);
+    // console.log("Numero max :" + numeroMax);
 
     return numeroMax;
 
 }
 
-// genera numeri in cui ci sono le mine *
+// genera numeri in cui ci sono le mine 
 function getAddMine( livello){
 
     console.log(" scelta numero mine in base alla difficlta");
@@ -188,67 +184,39 @@ function CheckEndGame(numero, numeroMax){
     return endGame;
 }
 
-// richiedi numero utente
+// richiedi numero utente *
 function inputNumeroDifficolta(min, max){
 
-    var checkInput = false;
-    var livello = 0;
-
-    console.log("----------------------");
+    var livello = $('#inputHTML').val();
+    var correctInput = true;
 
     do{
-
-        livello = parseInt(prompt("Inserisci un numero tra " +min +" e " + max+" per scegliere difficolta"));
-   
-        if( livello == false ){
-
-            /* input non valido */
-            console.log("Input non valido");
-            checkInput = false;
-
-        } else{
-
-            /* input valido*/
-            console.log("Input valido");
+    
+            // console.log("Input inserito: " + livello);
             
-            /* Valore tra min e max complessi*/
             if(livello >= min && livello <= max ){
-
                 console.log("Numero complesso tra " + min + " e " + max + " complesso: " + livello);
                 checkInput = true;
-
             } else{
-
-                console.log("Numero non complesso tra 1 e 3 difficolta: " + livello);
+                alert("Numero non complesso tra 1 e 3 difficolta");
             }
 
-        }
-
-        console.log("-------------");
-
-    } while( !checkInput)
+    } while( !correctInput)
 
     return livello - 1;
 
-}
 
-// scelta difficolta
-function sceltaDifficolta(){
-
-    var difficolta = inputNumeroDifficolta(1,3);
-    return difficolta;
-    
 }
 
 // programma
 function programma(){
 
-    // var playGame = true;
+    var playGame = true;
     
-    // console.log("Scegli una difficolta");
-    // var livello = sceltaDifficolta(0,3);
+    console.log("Scegli una difficolta");
+    var livello = inputNumeroDifficolta(1,3);
 
-    // var numeroMax = numberMax(livello);
+    var numeroMax = numberMax(livello);
 
     // console.log("Genera numeri mine");
     // getAddMine(livello);

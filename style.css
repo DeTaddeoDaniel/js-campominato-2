@@ -1,8 +1,19 @@
-body{
-    background-color: peru;
-    font-family: 'Roboto', sans-serif;
+:root {
+  --dark-blue: #073b4c;
+  --light-blue: #118ab2;
+  --azzuro-light:#8ecae6;
+  --green: #6a994e;
+  --orange: #ffd166;
+  --red: #ef233c;
 }
 
-.font-size-25{
-    font-size: 25px;
+body {
+  background-color: var(--dark-blue);
+  font-family: 'Roboto', sans-serif;
+  color: white;
 }
+
+.font-size-25 {
+  font-size: 25px;
+}
+/*# sourceMappingURL=style.css.map */
