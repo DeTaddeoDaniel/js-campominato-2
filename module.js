@@ -1,278 +1,270 @@
-var arrayMine = [];
-var arrayNumeriEstratti = [];
+/*
+    Il computer deve generare 16 numeri casuali tra 1 e 100.
+    In seguito deve chiedere all’utente di inserire un numero alla
+    volta, sempre compreso tra 1 e 100.
 
-// click event
-$('.newGame').click(function (e) { 
-    console.log('reload page')
-    location.reload()    
-});
 
-$('.livello').keypress( function(e){
-    if(e.which == 13){
-        console.log('enter key press')
-        programma() 
-    }  
-});
+    Se il numero è presente nella lista dei numeri generati, la partita
+    termina, altrimenti si continua chiedendo all’utente un altro
+    numero.
 
-// elementi html variabili
-var HTMLnumero = document.getElementById('inputHTML')
+    La partita termina quando il giocatore inserisce un numero
+    “vietato” o raggiunge il numero massimo possibile di numeri
+    consentiti.
+
+    Al termine della partita il software deve comunicare il punteggio,
+    cioè il numero di volte che l’utente ha inserito un numero
+    consentito.
+
+    BONUS: all’inizio il software richiede anche una difficoltà
+    all’utente che cambia il range di numeri casuali.
+    Con difficoltà 0=> tra 1 e 100, con difficoltà 1 => tra 1 e 80, con
+    difficoltà 2=> tra 1 e 50
+*/
+
+// frament appoggio
+const fragment = document.createDocumentFragment()
+
+// template vari
+var templateStarted = document.getElementById('template-started').content
+var templateInputLevel =document.getElementById('template-select-level').content 
+var templateGame =document.getElementById('template-game').content
+var templateCard =document.getElementById('template-card').content
+var templateEndGame = document.getElementById('template-endGame').content
+
+// element html
+var wrap = document.getElementById('wrap')
+var gameStart = document.getElementById('playGame')
+let punteggio = 0
 
 // genera numeri casuali con min e max complessi
 function getRndInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1) ) + min;
 }
 
-//  restituisce numero celle gioco *
+//  restituisce numero celle gioco
 function numberMax( difficolta){
 
-    var numberMax = 0;
+    var numeroMax = 0;
+    console.log(typeof(difficolta))
 
     switch (difficolta){
 
-        case 0:
+        case 1:
             numeroMax = 100;
             break;
-        case 1:
+        case 2:
             numeroMax = 80;
             break;
-        case 2:
+        case 3:
             numeroMax = 50;
+            console.log("Numero case 3");
             break;
+        default:
+            console.log('error number max')
     }
 
-    // console.log("Numero max :" + numeroMax);
+    console.log("Numero max :" + numeroMax);
 
     return numeroMax;
 
 }
 
-// genera numeri in cui ci sono le mine 
+// genera numeri in cui ci sono le mine
 function getAddMine( livello){
 
-    console.log(" scelta numero mine in base alla difficlta");
+    // console.log(" scelta numero mine in base alla difficlta");
 
-    var numeroMine =16;
-    var numeroMin = 1;
+    var array = []
+    var numeroMine = 16;
+    var numeroMin = 0;
     var numeroMax = numberMax(livello);
 
     for (let i = 0; i < numeroMine; i++) {
-        
-        numeroEstratto = getRndInteger(numeroMin,numeroMax);
 
-        if(!arrayMine.includes(numeroEstratto)){
-            arrayMine.push(numeroEstratto);
-            console.log( i + " - Numero casella mina: " + numeroEstratto);        
+        numero = getRndInteger(numeroMin,numeroMax);
+
+        if(!array.includes(numero)){
+            array.push(numero);       
         } else {
             i--
         }
     }
-
-    console.log("-----------");
+    
+    // console.log(array);
+    return array.sort((a,b) => a - b)
 }
 
-// richiedi numero utente
-function inputNumero(min, max){
+// attivare bottone se è stato scelto livello
+function buttonActive() {
 
-    var checkInput = false;
-    var numero = 0;
+    var selectValue = document.getElementById('level')
 
-    console.log(" ---- **** ----");
+    selectValue.addEventListener('click', function(e){
 
-    do{
+        var elementoPrecedente = selectValue.querySelector('.active')
+        elementoPrecedente.classList.remove('active')
 
-        numero = parseInt(prompt("Inserisci un numero tra 1 e "+ max +" complessi"));
-        // numero = getRndInteger(1,100);
+        var elemento = e.target
+        elemento.classList.add('active')
+    });
+}
 
-        if( numero == false ){
+// pagina inizio
+function createFirstPage(){
 
-            /* input non valido */
-            console.log("Input non valido");
-            checkInput = false;
+    // aggiungi titolo
+    var clone = templateStarted.cloneNode(true);
+    fragment.appendChild(clone)
 
-        } else{
+    // aggiungi messaggio selezione input
+    clone = templateInputLevel.cloneNode(true);
+    fragment.appendChild(clone)
 
-            /* input valido*/
-            console.log("Input valido");
-            
-            /* Valore tra min e max complessi*/
-            if(numero >= min && numero <= max ){
+    // Inserisci del html
+    wrap.appendChild(fragment)
 
-                console.log("Numero complesso tra " + min + " e " + max + " complesso: " + numero);
-                checkInput = true;
+    // cambiamenti active scelta livello
+    buttonActive()
 
-            } else{
+    // aggiungi evento per seconda pagina
+    var gameStart = document.getElementById('playGame')
+    gameStart.addEventListener('click', function(){
+        var level = document.getElementById('level').querySelector('.active').getAttribute('value')
+        createSecondPage(level)
+    });
 
-                console.log("Numero non complesso tra 1 e 100 complesso: " + numero);
-            }
+}
 
+// creazione seconda pagina
+function createSecondPage(level){
+
+    level = parseInt(level)
+    
+    // togli codice per inserimento livello
+    document.getElementById('wrap').children[1].remove()
+
+    // aggiungi template game
+    var clone = templateGame.cloneNode(true);
+    fragment.appendChild(clone)
+    wrap.appendChild(fragment)
+
+    // aggiungi azione ricarica seconda pagina
+    document.getElementById('btnReset').addEventListener('click', function(){
+        createSecondPage(level)
+        console.log('reload con level: ' + level)
+    })
+
+    // variabile posizione inserimento cards
+    var cards = document.getElementById('cards')
+    var spazi = numberMax(level)
+
+    // generazione mine
+    var arrayMine = getAddMine(level)
+    console.log(arrayMine)
+    
+    // check mine
+    document.getElementById('arrayMine').textContent ='mine: ' + arrayMine.toString()
+    console.log(document.getElementById('arrayMine').textContent)
+
+    // creazione e inserimento delle card
+    for(var i=0 ; i< spazi ; i++){
+
+        clone = templateCard.cloneNode(true)
+
+        // aggiungi numero spazio
+        clone.querySelector('.cardGame').setAttribute('number', i)
+
+        // aggiungi classe se mina il numero spazio
+        if(arrayMine.includes(i)){
+            clone.querySelector('.cardGame').classList.add('mine')
         }
+        
+        fragment.appendChild(clone)
+    }
 
-        console.log("-------------");
+    cards.appendChild(fragment)
 
-    } while( !checkInput)
-
-    return numero;
+    //aggiungi evento restituisce id card clicato
+    $('.cardGame').click(function (e) { 
+        numeroPremuto = e.target.getAttribute('number');
+        clickCella(numeroPremuto,e)
+        e.stopPropagation()
+    });
 
 }
 
-// aggiungi numeri estratti
-function addNumber(numero){
+// funzione di mina premuta
+function endGame(messaggio) {
 
-    if(!arrayNumeriEstratti.includes(numero)){
-        arrayNumeriEstratti.push(numeroEstratto);
-        console.log("aggiunto numeri estratti: " + numero);  
-    } else {
-        console.log("Non aggiunto numeri estratti: " + numero);
-    }
-
-      console.log("--------");     
+    // mina, 
     
-}
-
-// check per numero mina
-function isMina(numero){
+    var spazi = cards.querySelectorAll('.cardGame.mine')
     
-    var isMina = false;
-    var indice = 0;
+    spazi.forEach(function(spazio) {
+        spazio.classList.add('bg-danger')
+        spazio.classList.remove('bg-success')
+    });
 
-    if(arrayMine.includes(numero)){
-        console.log(numero + " è  una mina in posizione " + indice);
-        isMina = true;
-    } else{
-        console.log(numero + " non è  una mina in posizione " + indice);
-    }
+    var clone = templateEndGame.cloneNode(true)
+    fragment.appendChild(clone)
+    wrap.appendChild(fragment)
 
-    console.log("------------");
-
-    return isMina;
-
-}
-
-// check per disponiblità mosse
-function mossaDisponibile( numberMax){
-
-
-    var mossaDisponibile = numberMax - arrayMine.length - arrayNumeriEstratti.length;
-
-    if( mossaDisponibile == 0 ){
-        // console.log("Mossa non disponibili");
-        mossaDisponibile = false;
-    } else {
-        // console.log("Mosse disponibili: "+ mossaDisponibile);
-        mossaDisponibile = true;
-    }
-
-    // console.log("------------");
-    return mossaDisponibile;
-
-}
-
-// Fine partita
-function CheckEndGame(numero, numeroMax){
-
-    var endGame = false;
-
-    if( mossaDisponibile(numeroMax) && isMina(numero)){
-
-        endGame = false;
-
-    } else {
-        endGame = true;
-    }
-
-    console.log("---------");
-    return endGame;
-}
-
-// richiedi numero utente *
-function inputNumeroDifficolta(min, max){
-
-    var livello = $('#inputHTML').val();
-    var correctInput = true;
-
-    do{
+    $("#staticBackdrop").modal('show');
     
-            // console.log("Input inserito: " + livello);
+    console.log(wrap.querySelector('#staticBackdrop'))
+}
+
+function isSpazioDisponibile(){
+    var pieno = true
+    var cards = document.getElementsByClassName('cardGame');
+
+    for( var i=0; i < cards.length && pieno ; i++){
+
+        if( (cards[i].classList.contains('mine') || cards[i].classList.contains('pressed')) ){
+            pieno = true
+            console.log('pieno: ' + i+pieno)
+        } else{
+            pieno = false
+        }
+    }
+
+    console.log('pieno: '+pieno)
+    return pieno
+}
+
+// evento alclick dell'elemento selezionato
+function clickCella(numeroId, e) {
+    
+    var element = e.target
+    var punteggioHTML = document.getElementById('punteggioPartita')
+
+    if(!element.classList.contains('pressed')){
+
+        element.classList.remove('bg-success')
+
+        
+
+        if(element.classList.contains('mine')){
+            element.classList.add('bg-danger')
+            console.log('end game')
+            endGame('Hai preso una mina')
+        } else{
+            element.classList.add('bg-info')
+            element.classList.add('pressed')
+            console.log('continue game')
             
-            if(livello >= min && livello <= max ){
-                console.log("Numero complesso tra " + min + " e " + max + " complesso: " + livello);
-                checkInput = true;
-            } else{
-                alert("Numero non complesso tra 1 e 3 difficolta");
+            if(isSpazioDisponibile()){
+                console.log('test spazio entry')
+                endGame('Hai vinto')
             }
-
-    } while( !correctInput)
-
-    return livello - 1;
-
-
-}
-
-// programma
-function programma(){
-
-    var playGame = true;
-    
-    console.log("Scegli una difficolta");
-    var livello = inputNumeroDifficolta(1,3);
-
-    var numeroMax = numberMax(livello);
-
-    // console.log("Genera numeri mine");
-    // getAddMine(livello);
-
-    // do{
-
-        // console.log("Richiesta numero utente");
-        // var numero = inputNumero(1, numeroMax);
-
-        // console.log("inserisci ai numeri estratti");
-        // addNumber(numero);
-
-        // console.log("Controlla se finita partita");
-        // var endGameVar = CheckEndGame(numero, numeroMax);
-
-        // if(!endGameVar){
-        //     console.log("terminata la partita");
-        //     playGame = false;
-        // } else {
-        //     // console.log("continua la partita");
-        //     playGame = true;
-        // }
-
-    // } while (playGame);
-
-    // punteggio finale
-    // if(isMina(numero) && arrayNumeriEstratti-length == 0){
-    //     console.log("Il tuo punteggio finale: " + (arrayNumeriEstratti.length));
-    // } else if(isMina(numero)){
-    //     console.log("Il tuo punteggio finale: " + arrayNumeriEstratti.length);
-    // } else{
-    //      console.log("Punteggio senza ripetizioni numeri");
-    // }
+            
+            punteggioHTML.innerText  = 'punteggio: ' + (++punteggio)
+        }
+    }
 
 }
 
-$(document).ready(programma());
 
-// Il computer deve generare 16 numeri casuali tra 1 e 100.
-// In seguito deve chiedere all’utente di inserire un numero alla
-// volta, sempre compreso tra 1 e 100.
-
-
-// Se il numero è presente nella lista dei numeri generati, la partita
-// termina, altrimenti si continua chiedendo all’utente un altro
-// numero.
-
-// La partita termina quando il giocatore inserisce un numero
-// “vietato” o raggiunge il numero massimo possibile di numeri
-// consentiti.
-
-// Al termine della partita il software deve comunicare il punteggio,
-// cioè il numero di volte che l’utente ha inserito un numero
-// consentito.
-
-// BONUS: all’inizio il software richiede anche una difficoltà
-// all’utente che cambia il range di numeri casuali.
-// Con difficoltà 0=> tra 1 e 100, con difficoltà 1 => tra 1 e 80, con
-// difficoltà 2=> tra 1 e 50
+// Pronto la pagina esegue l'operazione
+$(document).ready(function() {createFirstPage()});

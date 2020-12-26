@@ -11,8 +11,55 @@ body{
     background-color:var(--dark-blue);
     font-family: 'Roboto', sans-serif;
     color: white;
+    font-size: 20px;
 }
 
 .font-size-25{
     font-size: 25px;
+}
+
+.game{
+    height: 100%;
+}
+
+.wrap{
+    height: 100vh;
+}
+
+.form-select{
+    width: 100%;
+}
+
+#cards{
+    padding: 1rem;
+    display: grid;
+    gap: 0rem;
+    column-gap: 0rem;
+    // grid-template-columns:auto auto auto auto;
+    grid-template-columns: repeat(10, 1fr);
+}
+
+.cardGame{
+    width: 100%;
+    height: 0;
+    padding-top:100%;
+    border: 1px solid black
+
+}
+
+.modal{
+    color: black;
+}
+
+
+.modal-content {
+    background-color: #457b9d;
+}
+
+.templateGame{
+    color: #525252;
+}
+
+.mine{
+    background-color: red;
 }
